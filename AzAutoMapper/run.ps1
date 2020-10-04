@@ -1,16 +1,14 @@
 using namespace System.Net
 param($Request, $TriggerMetadata)
 #
-$ApplicationId = 'ApplicationID'
-$ApplicationSecret = 'ApplicationSecret'
 #
 $TenantID = $Request.Query.TenantID
 $user = $Request.Query.Username
  
 $body = @{
     'resource'      = 'https://graph.microsoft.com'
-    'client_id'     = $ApplicationId
-    'client_secret' = $ApplicationSecret
+    'client_id'     = $ENV:ApplicationId
+    'client_secret' = $ENV:ApplicationSecret
     'grant_type'    = "client_credentials"
     'scope'         = "openid"
 }
@@ -26,7 +24,7 @@ $MemberOf = foreach ($Team in $Teams) {
     $SiteDrivesUri = "https://graph.microsoft.com/beta/groups/$($Team.id)/sites/root/Lists"
     $SitesDrivesReq = (Invoke-RestMethod -Uri $SiteDrivesUri -Headers $Headers -Method Get -ContentType "application/json").value | where-object { $_.Name -eq "Shared Documents" }
     $DriveInfo = $SitesDrivesReq.ParentReference.siteid -split ','
-    if($SiteRootReq.description -like "*no-auto-map*"){ continue }
+    if ($SiteRootReq.description -like "*no-auto-map*") { continue }
     if ($null -eq [System.Web.HttpUtility]::UrlEncode($SitesDrivesReq.id)) { continue }
     [pscustomobject] @{
         SiteID    = [System.Web.HttpUtility]::UrlEncode("{$($DriveInfo[1])}")
@@ -41,6 +39,6 @@ $MemberOf = foreach ($Team in $Teams) {
  
 # Associate values to output bindings by calling 'Push-OutputBinding'.
 Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
-    StatusCode = [HttpStatusCode]::OK
-    Body = $MemberOf
-})
+        StatusCode = [HttpStatusCode]::OK
+        Body       = $MemberOf
+    })
