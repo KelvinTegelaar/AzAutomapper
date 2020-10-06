@@ -1,12 +1,13 @@
+
+Add-Type -AssemblyName System.Web
 #########################
-$AutoMapURL = "https://azmapper.azurewebsites.net/api/AzOneMap"
-$AutomapAPIKey = "TheAPIKeyFromTheAppAlsoKnownAsTheCode"
+$AutoMapURL = "YourAzMapURL"
+$AutomapAPIKey = "YourAzMapKey"
 #########################
- 
 write-host "Grabbing OneDrive info from registry" -ForegroundColor Green
-$TenantID = (get-itemproperty "HKCU:\SOFTWARE\Microsoft\OneDrive\Accounts\Business1").ConfiguredTenantId
-$TenantDisplayName = (get-itemproperty "HKCU:\SOFTWARE\Microsoft\OneDrive\Accounts\Business1").Displayname
-$username = (get-itemproperty "HKCU:\SOFTWARE\Microsoft\OneDrive\Accounts\Business1").userEmail
+$TenantID = (get-itemproperty "HKCU:\SOFTWARE\Microsoft\OneDrive\Accounts\Business1\").ConfiguredTenantId
+$TenantDisplayName = (get-itemproperty "HKCU:\SOFTWARE\Microsoft\OneDrive\Accounts\Business1\").Displayname
+$username = (get-itemproperty "HKCU:\SOFTWARE\Microsoft\OneDrive\Accounts\Business1\").userEmail
 $CurrentlySynced = (get-itemproperty "HKCU:\SOFTWARE\Microsoft\OneDrive\Accounts\Business1\Tenants\$($tenantdisplayname)" -ErrorAction SilentlyContinue)
 Write-Host "Retrieving all possible teams."  -ForegroundColor Green
 $ListOfTeams = Invoke-RestMethod -Method get -uri "$($AutoMapURL)?Tenantid=$($TenantID)&Username=$($Username)&code=$($AutomapAPIKey)" -UseBasicParsing
@@ -20,7 +21,7 @@ foreach ($Team in $ListOfTeams) {
     }
     else {
         write-host "Mapping Team: $Sitename" -ForegroundColor Green
-        Start-Process "odopen://sync/?siteId=$($team.SiteID)&webId=$($team.webid)&amp;listId=$($team.ListID)&userEmail=$upn&webUrl=$($team.Weburl)&webtitle=$($team.Webtitle)"
+        Start-Process "odopen://sync/?siteId=$($team.SiteID)&webId=$($team.webid)&listId=$($team.ListID)&userEmail=$upn&webUrl=$($team.Weburl)&webtitle=$($team.Webtitle)"
         start-sleep 5
     }
 }
