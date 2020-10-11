@@ -29,7 +29,7 @@ $MemberOf = foreach ($Team in $Teams) {
     [pscustomobject] @{
         SiteID    = [System.Web.HttpUtility]::UrlEncode("{$($DriveInfo[1])}")
         WebID     = [System.Web.HttpUtility]::UrlEncode("{$($DriveInfo[2])}")
-        ListID    = [System.Web.HttpUtility]::UrlEncode($SitesDrivesReq.id)
+        ListID    = [System.Web.HttpUtility]::UrlEncode("{$($SitesDrivesReq.id)}")
         WebURL    = [System.Web.HttpUtility]::UrlEncode($SiteRootReq.webUrl)
         Webtitle  = [System.Web.HttpUtility]::UrlEncode($($Team.displayName)).Replace("+", "%20")
         listtitle = [System.Web.HttpUtility]::UrlEncode($SitesDrivesReq.name)
